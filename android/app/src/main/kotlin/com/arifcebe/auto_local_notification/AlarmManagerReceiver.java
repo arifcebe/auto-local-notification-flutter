@@ -11,27 +11,39 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-public class AlarmManagerReceiver  extends BroadcastReceiver {
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+public class AlarmManagerReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         /// TODO show notification when time has come
         NotificationCompat.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            builder = new NotificationCompat.Builder(context,"Azan");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder = new NotificationCompat.Builder(context, "Azan");
             builder.setPriority(NotificationManager.IMPORTANCE_HIGH);
         } else {
-            builder = new NotificationCompat.Builder(context);    
+            builder = new NotificationCompat.Builder(context);
         }
-        Log.d("receive alarm","receive alarm show notif");
+        long showTime = intent.getLongExtra("setShowNotif", 0);
+        long currentTime = System.currentTimeMillis();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss", Locale.UK);
+        String formattedTime = simpleDateFormat.format(new Date(showTime));
+        String currentFormattedTime = simpleDateFormat.format(new Date(currentTime));
+        Log.d("receive alarm", "receive alarm show notif " + formattedTime + " " + currentFormattedTime);
         builder.setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("Alarm")
-                .setContentText("Waktunya sholat")
-                .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
+                .setContentText("Waktunya sholat " + formattedTime + " " + currentFormattedTime)
+                .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setOngoing(true);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(5,builder.build());
+        notificationManager.notify(5, builder.build());
     }
 }

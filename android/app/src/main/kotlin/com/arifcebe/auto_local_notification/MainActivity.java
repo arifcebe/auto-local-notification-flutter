@@ -12,8 +12,12 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -35,7 +39,6 @@ public class MainActivity extends FlutterActivity {
         methodChannel.setMethodCallHandler((call, result) -> {
             if (call.method.equals("startAlarm")){
                 /// TODO running function for start alarm manager
-                Log.d("method_channel","run set alarm");
                 setAlarmManager();
                 result.success(true);
             }
@@ -62,8 +65,20 @@ public class MainActivity extends FlutterActivity {
         calendar.set(Calendar.HOUR_OF_DAY,11);
         calendar.set(Calendar.MINUTE,36);
 
+        long setShowNotif = System.currentTimeMillis() + (1000 * 60);
         intent = new Intent(this,AlarmManagerReceiver.class);
+        intent.putExtra("setShowNotif", setShowNotif);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss", Locale.UK);
+        String formattedTime = simpleDateFormat.format(new Date(setShowNotif));
+        Log.d("method_channel","run set alarm " + formattedTime);
         pendingIntent = PendingIntent.getBroadcast(this,1,intent,0);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis(),1000 * 60,pendingIntent);
+//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, setShowNotif,1000 * 60,pendingIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, setShowNotif, pendingIntent);
+        }
+//        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC, System.currentTimeMillis(), 1000 * 60, pendingIntent);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, setShowNotif, pendingIntent);
+//        }
     }
 }
