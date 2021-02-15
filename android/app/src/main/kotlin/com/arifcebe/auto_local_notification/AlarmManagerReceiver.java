@@ -2,6 +2,7 @@ package com.arifcebe.auto_local_notification;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,12 @@ public class AlarmManagerReceiver  extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         /// TODO show notification when time has come
+        Intent myIntent = new Intent(context,MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                myIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder builder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             builder = new NotificationCompat.Builder(context,"Azan");
@@ -29,7 +36,8 @@ public class AlarmManagerReceiver  extends BroadcastReceiver {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("Alarm")
                 .setContentText("Waktunya sholat")
-                .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND);
+                .setContentIntent(pendingIntent)
+                .setDefaults(Notification.DEFAULT_SOUND);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(5,builder.build());

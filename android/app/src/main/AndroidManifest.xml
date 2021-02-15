@@ -47,6 +47,13 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <receiver android:name=".AlarmManagerReceiver" />
+        <receiver android:name=".AlarmManagerReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="ac.in.ActivityRecognition.RestartSensor"/>
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>
