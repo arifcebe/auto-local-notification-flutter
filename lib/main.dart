@@ -1,5 +1,8 @@
+import 'package:auto_local_notification/expandable_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'expandable_view_sample.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,7 +30,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: ExpansionTileSample(),
     );
   }
 }
@@ -57,6 +60,14 @@ class _MyHomePageState extends State<MyHomePage> {
   void _startAlarm() async {
     bool invokeAlarm = await _methodChannel.invokeMethod("startAlarm");
     print("check invoked $invokeAlarm");
+  }
+
+  void _setExactAlarm() async {
+    var values = {
+      "timeToShow": "12:40"
+    };
+    bool invokeAlarm = await _methodChannel.invokeMethod("startExactAlarm", values);
+    print("check invoked exact alarm $invokeAlarm");
   }
 
   @override
@@ -100,6 +111,9 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            RaisedButton(onPressed: (){
+              _setExactAlarm();
+            }, child: Text("Set Alarm Exact and Repeat"),)
           ],
         ),
       ),
